@@ -56,18 +56,63 @@ class Metronome extends Component {
         }));
     };
 
+    handleBeatsPerBarChange = e => { 
+        const {bpm} = this.state;
+
+        const beatsPerBar = e.currentTarget.value;
+
+        if (this.state.playing) {
+            //stop old timer and start a new one 
+            clearInterval(this.timer);
+            this.timer = setInterval(this.playClick, (60 / bpm) * 1000);
+
+            // set the new BPM and reset the beat counter
+            this.setState({
+                count: 0,
+                beatsPerBar
+            })
+
+        } else {
+            // otherwise just update the bpm
+            this.setState({ bpm });
+        }
+        this.setState({ bpm });
+    }
+
     handleBpmChange = e => { 
         const bpm = e.currentTarget.value;
+
+        if (this.state.playing) {
+            //stop old timer and start a new one 
+            clearInterval(this.timer);
+            this.timer = setInterval(this.playClick, (60 / bpm) * 1000);
+
+            // set the new BPM and reset the beat counter
+            this.setState({
+                count: 0,
+                bpm
+            })
+        } else {
+            // otherwise just update the bpm
+            this.setState({ bpm });
+        }
         this.setState({ bpm });
     }
 
     render() {
-        const { playing, bpm } = this.state;
+        const { playing, bpm, beatsPerBar } = this.state;
     
         return (
           <div className="metronome">
+              <div className="beats-input">
+              <label>Beats per bar</label>
+               <input
+                type="number"
+                value={beatsPerBar}
+                onChange={this.handleBeatsPerBarChange} />
+            </div>
             <div className="bpm-slider">
-              <div>{bpm} BPM</div>
+              <label>{bpm} BPM</label>
               <input
                 type="range"
                 min="60"
